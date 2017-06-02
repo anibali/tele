@@ -1,0 +1,10 @@
+version: '2'
+services:
+  tele:
+    build: .
+    volumes:
+      - .:/app
+      - /data:/data:ro
+      - ~/.pypirc:/home/user/.pypirc:ro
+    environment:
+      - PYTHONIOENCODING=utf_8
