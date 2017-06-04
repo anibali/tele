@@ -1,8 +1,24 @@
-import tele, tele.meter
-from collections import OrderedDict
+import tele
 import torchnet.meter
 
-class TextCell(tele.DisplayCell):
+class Sink(tele.output.Sink):
+  def render_all(self, step_num, meters):
+    render_results = super().render_all(step_num, meters)
+    print('[{:4d}] '.format(step_num) + ', '.join(render_results))
+    return render_results
+
+class Conf(tele.output.Conf):
+  def make_auto_cell(self, meter_name, meter):
+    if isinstance(meter, torchnet.meter.AverageValueMeter)\
+    or isinstance(meter, torchnet.meter.TimeMeter)\
+    or isinstance(meter, tele.meter.ValueMeter):
+      return TextCell()
+    return None
+
+  def build(self, cell_list):
+    return Sink(cell_list)
+
+class TextCell(tele.output.Cell):
   def __init__(self):
     super().__init__()
 
@@ -17,17 +33,3 @@ class TextCell(tele.DisplayCell):
     else:
       value_str = str(value)
     return '='.join([meter_name, value_str])
-
-class ConsoleOutput(tele.TelemetryOutput):
-  auto_cell_types = {
-    torchnet.meter.AverageValueMeter: lambda name, meter: TextCell(),
-    torchnet.meter.TimeMeter: lambda name, meter: TextCell(),
-  }
-
-  def __init__(self):
-    super().__init__()
-
-  def render_all(self, step_num, meters):
-    render_results = super().render_all(step_num, meters)
-    print('[{:4d}] '.format(step_num) + ', '.join(render_results))
-    return render_results

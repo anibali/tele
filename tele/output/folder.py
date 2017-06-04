@@ -1,11 +1,28 @@
-import tele, tele.meter
+import tele
 from collections import OrderedDict
 import torchnet.meter
 import os
 import json
 import h5py
 
-class FolderCell(tele.DisplayCell):
+Sink = tele.output.Sink
+
+class Conf(tele.output.Conf):
+  def __init__(self, dir_path):
+    super().__init__()
+    self.dir_path = dir_path
+
+  def make_auto_cell(self, meter_name, meter):
+    return None
+
+  def build(self, cell_list):
+    if not os.path.exists(self.dir_path):
+      os.makedirs(self.dir_path)
+    for i, (meter_names, cell) in enumerate(cell_list):
+      cell.set_dir(self.dir_path)
+    return Sink(cell_list)
+
+class FolderCell(tele.output.Cell):
   def __init__(self, filename_template):
     super().__init__()
     self.filename_template = filename_template
@@ -13,7 +30,7 @@ class FolderCell(tele.DisplayCell):
 
   def set_dir(self, dir_path):
     self.dir_path = dir_path
-  
+
   def build_path(self, step_num):
     return os.path.join(self.dir_path, self.filename_template.format(step_num))
 
@@ -61,14 +78,3 @@ class HDF5Cell(FolderCell):
         else:
           h5_path = meter_name
         f.create_dataset(h5_path, data=meter.value())
-
-class FolderOutput(tele.TelemetryOutput):
-  def __init__(self, dir_path):
-    super().__init__()
-    self.dir_path = dir_path
-
-  def prepare(self, meters):
-    super().prepare(meters)
-    os.makedirs(self.dir_path)    
-    for i, (meter_names, cell) in enumerate(self.cell_list):
-      cell.set_dir(self.dir_path)

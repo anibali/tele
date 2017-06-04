@@ -18,7 +18,7 @@ class Client:
     prepped = self.session.prepare_request(req)
     r = self.session.send(prepped)
     return r.json()
-  
+
   def async_request(self, method, path, data=None):
     if self.always_sync:
       self.request(method, path, data)

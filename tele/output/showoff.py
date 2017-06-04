@@ -5,7 +5,44 @@ from PIL import Image
 import torchnet.meter
 import torchvision.transforms as transforms
 
-class ShowoffDisplayCell(tele.DisplayCell):
+Sink = tele.output.Sink
+
+class Conf(tele.output.Conf):
+  def __init__(self, notebook):
+    super().__init__()
+    self.notebook = notebook
+
+  def make_auto_cell(self, meter_name, meter):
+    if isinstance(meter, tele.meter.StringBuilderMeter):
+      return TextCell(meter_name)
+    if isinstance(meter, torchnet.meter.AverageValueMeter)\
+    or isinstance(meter, torchnet.meter.TimeMeter):
+      return LineGraphCell(meter_name)
+    return None
+
+  def _calc_frame_bounds(self, index):
+    cell_width = 480
+    cell_height = 308
+    cell_rows = 3
+    cell_cols = 4
+
+    r, c = divmod(index, cell_cols)
+
+    return {
+      'x': c * cell_width,
+      'y': r * cell_height,
+      'width': cell_width,
+      'height': cell_height
+    }
+
+  def build(self, cell_list):
+    for i, (meter_names, cell) in enumerate(cell_list):
+      bounds = self._calc_frame_bounds(i)
+      frame = self.notebook.new_frame(cell.name, bounds)
+      cell.set_frame(frame)
+    return Sink(cell_list)
+
+class ShowoffCell(tele.output.Cell):
   def __init__(self, name):
     super().__init__()
     self.name = name
@@ -14,7 +51,7 @@ class ShowoffDisplayCell(tele.DisplayCell):
   def set_frame(self, frame):
     self.frame = frame
 
-class LineGraphCell(ShowoffDisplayCell):
+class LineGraphCell(ShowoffCell):
   def __init__(self, name):
     super().__init__(name)
     self.xs = []
@@ -33,7 +70,7 @@ class LineGraphCell(ShowoffDisplayCell):
       series_names.append(meter_name)
     self.frame.line_graph(self.xs, self.yss, series_names=series_names)
 
-class TextCell(ShowoffDisplayCell):
+class TextCell(ShowoffCell):
   def __init__(self, name):
     super().__init__(name)
 
@@ -41,7 +78,7 @@ class TextCell(ShowoffDisplayCell):
     meter_name, meter = next(iter(meters.items()))
     self.frame.text(str(meter.value()))
 
-class ImageCell(ShowoffDisplayCell):
+class ImageCell(ShowoffCell):
   def __init__(self, name, images_per_row=None):
     super().__init__(name)
     self.images_per_row = images_per_row
@@ -73,7 +110,7 @@ class ImageCell(ShowoffDisplayCell):
     stream.write('</div>')
     self.frame.html(stream.getvalue())
 
-class GraphvizCell(ShowoffDisplayCell):
+class GraphvizCell(ShowoffCell):
   def __init__(self, name):
     super().__init__(name)
 
@@ -85,7 +122,7 @@ class GraphvizCell(ShowoffDisplayCell):
     img_tag_template = '<img style="width: 100%;" src=data:image/svg+xml;base64,{}>'
     self.frame.html(img_tag_template.format(b64_str))
 
-class InspectValueCell(ShowoffDisplayCell):
+class InspectValueCell(ShowoffCell):
   def __init__(self, name, flatten=False):
     super().__init__(name)
     self.flatten = flatten
@@ -114,38 +151,3 @@ class InspectValueCell(ShowoffDisplayCell):
       stream.write('</pre></td></tr>')
     stream.write('</table>')
     self.frame.html(stream.getvalue())
-
-class ShowoffOutput(tele.TelemetryOutput):
-  auto_cell_types = {
-    tele.meter.StringBuilderMeter: lambda name, meter: TextCell(name),
-    torchnet.meter.AverageValueMeter: lambda name, meter: LineGraphCell(name),
-    torchnet.meter.TimeMeter: lambda name, meter: LineGraphCell(name),
-  }
-
-  def __init__(self, notebook):
-    super().__init__()
-    self.notebook = notebook
-    self.histories = {}
-
-  def _calc_frame_bounds(self, index):
-    cell_width = 480
-    cell_height = 308
-    cell_rows = 3
-    cell_cols = 4
-
-    r, c = divmod(index, cell_cols)
-
-    return {
-      'x': c * cell_width,
-      'y': r * cell_height,
-      'width': cell_width,
-      'height': cell_height
-    }
-
-  def prepare(self, meters):
-    super().prepare(meters)
-
-    for i, (meter_names, cell) in enumerate(self.cell_list):
-      bounds = self._calc_frame_bounds(i)
-      frame = self.notebook.new_frame(cell.name, bounds)
-      cell.set_frame(frame)
