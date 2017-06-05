@@ -1,5 +1,6 @@
-from tele.meter import ValueMeter
 import unittest
+
+from tele.meter import ValueMeter
 
 class TestValueMeter(unittest.TestCase):
   def test_set_value(self):

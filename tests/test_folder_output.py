@@ -1,7 +1,8 @@
+import unittest
+
 from tele import Telemetry
 from tele.meter import ValueMeter
-from tele.output import folder
-import unittest
+import tele.folder, tele.folder.views
 from tempfile import TemporaryDirectory
 import os
 import json
@@ -11,7 +12,9 @@ class TestFolderOutput(unittest.TestCase):
     t = Telemetry({'val': ValueMeter()})
     t['val'].set_value(42)
     with TemporaryDirectory() as tmpdir:
-      t.sink(folder.Conf(tmpdir), [(['val'], folder.JSONCell('test.json'))])
+      t.sink(tele.folder.Conf(tmpdir), [
+        tele.folder.views.JSON(['val'], 'test.json')
+      ])
       t.step()
 
       file_path = os.path.join(tmpdir, 'test.json')

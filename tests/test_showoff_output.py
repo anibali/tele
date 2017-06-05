@@ -1,10 +1,9 @@
+import unittest
+
 from tele import Telemetry
 from tele.meter import ValueMeter
-from tele.output import showoff
-import unittest
-from tempfile import TemporaryDirectory
-import os
-import json
+import tele.showoff
+import tele.showoff.views
 import pyshowoff
 
 class DummyClient(pyshowoff.Client):
@@ -32,7 +31,9 @@ class TestShowoffOutput(unittest.TestCase):
     notebook = pyshowoff.Notebook(client, 1)
     t = Telemetry({'val': ValueMeter()})
     t['val'].set_value(42)
-    t.sink(showoff.Conf(notebook), [(['val'], showoff.TextCell('Value'))])
+    t.sink(tele.showoff.Conf(notebook), [
+      tele.showoff.views.Text(['val'], 'Value'),
+    ])
     t.step()
     self.assertEqual(patch_data, {'data': {
       'id': '100',
