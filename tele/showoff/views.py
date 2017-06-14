@@ -4,6 +4,7 @@ import base64
 from PIL import Image
 import torchvision.transforms as transforms
 import torchnet.meter
+import numpy as np
 
 class Cell(tele.Cell):
   def __init__(self, meter_names, frame):
@@ -104,20 +105,20 @@ class LineGraph(View):
     return _LineGraphCell(self.meter_names, frame)
 
 class _HistogramCell(Cell):
-  def __init__(self, meter_names, frame, maxbins, extent):
+  def __init__(self, meter_names, frame, bins, extent):
     super().__init__(meter_names, frame)
-    self.maxbins = maxbins
+    self.bins = bins
     self.extent = extent
 
   def render(self, step_num, meters):
-    xs = []
+    vals = []
     for meter in meters:
-      xs.extend(meter.value())
-    values = [{'x': x} for x in xs]
+      vals.extend(meter.value())
+    ys, xs = np.histogram(vals, bins=self.bins, range=self.extent)
 
-    bin_opts = {'maxbins': self.maxbins}
-    if self.extent is not None:
-      bin_opts['extent'] = self.extent
+    xs = [float(x1 + x2) / 2 for x1, x2 in zip(xs, xs[1:])]
+
+    values = [{'x': '{:0.2f}'.format(x), 'y': int(y)} for x, y in zip(xs, ys)]
 
     spec = {
       'width': 370,
@@ -126,13 +127,12 @@ class _HistogramCell(Cell):
       'mark': 'bar',
       'encoding': {
         'x': {
-          'bin': bin_opts,
           'field': 'x',
-          'type': 'quantitative'
+          'type': 'ordinal',
+          'axis': {'labelAngle': 0}
         },
         'y': {
-          'aggregate': 'count',
-          'field': '*',
+          'field': 'y',
           'type': 'quantitative'
         }
       }
@@ -140,13 +140,13 @@ class _HistogramCell(Cell):
     self.frame.vegalite(spec)
 
 class Histogram(View):
-  def __init__(self, meter_names, frame_title, maxbins=10, extent=None):
+  def __init__(self, meter_names, frame_title, bins=10, extent=None):
     super().__init__(meter_names, frame_title)
-    self.maxbins = maxbins
+    self.bins = bins
     self.extent = extent
 
   def build(self, frame):
-    return _HistogramCell(self.meter_names, frame, self.maxbins, self.extent)
+    return _HistogramCell(self.meter_names, frame, self.bins, self.extent)
 
 class _ImageCell(Cell):
   def __init__(self, meter_names, frame, images_per_row):

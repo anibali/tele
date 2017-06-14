@@ -54,9 +54,9 @@ class TestShowoffOutput(unittest.TestCase):
     client = DummyClient(callback)
     notebook = pyshowoff.Notebook(client, 1)
     t = Telemetry({'val': ValueMeter()})
-    t['val'].set_value([1, 1, 1, 2, 2, 3, 4, 3])
+    t['val'].set_value([0.9, 1, 1.1, 2, 2, 3, 4, 3])
     t.sink(tele.showoff.Conf(notebook), [
-      tele.showoff.views.Histogram(['val'], 'Value', maxbins=10),
+      tele.showoff.views.Histogram(['val'], 'Value', bins=10, extent=[0, 10]),
     ])
     t.step()
     self.assertEqual(patch_data, {'data': {
@@ -68,12 +68,15 @@ class TestShowoffOutput(unittest.TestCase):
           'width': 370,
           'height': 250,
           'data': {'values': [
-            {'x': 1}, {'x': 1}, {'x': 1}, {'x': 2}, {'x': 2}, {'x': 3}, {'x': 4}, {'x': 3}
+            {'x': '0.50', 'y': 1}, {'x': '1.50', 'y': 2}, {'x': '2.50', 'y': 2},
+            {'x': '3.50', 'y': 2}, {'x': '4.50', 'y': 1}, {'x': '5.50', 'y': 0},
+            {'x': '6.50', 'y': 0}, {'x': '7.50', 'y': 0}, {'x': '8.50', 'y': 0},
+            {'x': '9.50', 'y': 0}
           ]},
           'mark': 'bar',
           'encoding': {
-            'x': {'bin': {'maxbins': 10}, 'field': 'x', 'type': 'quantitative'},
-            'y': {'aggregate': 'count', 'field': '*', 'type': 'quantitative'}
+            'x': {'field': 'x', 'type': 'ordinal', 'axis': {'labelAngle': 0}},
+            'y': {'field': 'y', 'type': 'quantitative'}
           }
         }}
       }
