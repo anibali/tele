@@ -24,6 +24,22 @@ class ValueMeter(Meter):
   def value(self):
     return self._value
 
+class ListMeter(Meter):
+  def __init__(self, skip_reset=False):
+    super().__init__(skip_reset)
+
+  def add(self, value):
+    self._list.append(value)
+
+  def add_all(self, values):
+    self._list.extend(values)
+
+  def reset(self):
+    self._list = []
+
+  def value(self):
+    return self._list
+
 class StringBuilderMeter(Meter):
   def __init__(self):
     self._value = StringIO()

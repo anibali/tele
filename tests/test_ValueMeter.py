@@ -7,4 +7,4 @@ class TestValueMeter(unittest.TestCase):
     meter = ValueMeter()
     self.assertIsNone(meter.value())
     meter.set_value(42)
-    self.assertEqual(42, meter.value())
+    self.assertEqual(meter.value(), 42)

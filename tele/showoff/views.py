@@ -103,6 +103,42 @@ class LineGraph(View):
   def build(self, frame):
     return _LineGraphCell(self.meter_names, frame)
 
+class _HistogramCell(Cell):
+  def __init__(self, meter_names, frame, maxbins):
+    super().__init__(meter_names, frame)
+    self.maxbins = maxbins
+
+  def render(self, step_num, meters):
+    xs = []
+    for meter in meters:
+      xs.extend(meter.value())
+    values = [{'x': x} for x in xs]
+    spec = {
+      'data': {'values': values},
+      'mark': 'bar',
+      'encoding': {
+        'x': {
+          'bin': {'maxbins': self.maxbins},
+          'field': 'x',
+          'type': 'quantitative'
+        },
+        'y': {
+          'aggregate': 'count',
+          'field': '*',
+          'type': 'quantitative'
+        }
+      }
+    }
+    self.frame.vegalite(spec)
+
+class Histogram(View):
+  def __init__(self, meter_names, frame_title, maxbins=10):
+    super().__init__(meter_names, frame_title)
+    self.maxbins = maxbins
+
+  def build(self, frame):
+    return _HistogramCell(self.meter_names, frame, self.maxbins)
+
 class _ImageCell(Cell):
   def __init__(self, meter_names, frame, images_per_row):
     super().__init__(meter_names, frame)
