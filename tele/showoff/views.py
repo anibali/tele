@@ -105,10 +105,11 @@ class LineGraph(View):
     return _LineGraphCell(self.meter_names, frame)
 
 class _HistogramCell(Cell):
-  def __init__(self, meter_names, frame, bins, extent):
+  def __init__(self, meter_names, frame, bins, extent, x_title):
     super().__init__(meter_names, frame)
     self.bins = bins
     self.extent = extent
+    self.x_title = x_title
 
   def render(self, step_num, meters):
     vals = []
@@ -129,24 +130,26 @@ class _HistogramCell(Cell):
         'x': {
           'field': 'x',
           'type': 'ordinal',
-          'axis': {'labelAngle': 0}
+          'axis': {'title': self.x_title, 'labelAngle': 0},
         },
         'y': {
           'field': 'y',
-          'type': 'quantitative'
+          'type': 'quantitative',
+          'axis': {'title': 'count'},
         }
       }
     }
     self.frame.vegalite(spec)
 
 class Histogram(View):
-  def __init__(self, meter_names, frame_title, bins=10, extent=None):
+  def __init__(self, meter_names, frame_title, bins=10, extent=None, x_title='x'):
     super().__init__(meter_names, frame_title)
     self.bins = bins
     self.extent = extent
+    self.x_title = x_title
 
   def build(self, frame):
-    return _HistogramCell(self.meter_names, frame, self.bins, self.extent)
+    return _HistogramCell(self.meter_names, frame, self.bins, self.extent, self.x_title)
 
 class _ImageCell(Cell):
   def __init__(self, meter_names, frame, images_per_row):

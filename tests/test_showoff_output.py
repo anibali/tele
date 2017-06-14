@@ -56,7 +56,7 @@ class TestShowoffOutput(unittest.TestCase):
     t = Telemetry({'val': ValueMeter()})
     t['val'].set_value([0.9, 1, 1.1, 2, 2, 3, 4, 3])
     t.sink(tele.showoff.Conf(notebook), [
-      tele.showoff.views.Histogram(['val'], 'Value', bins=10, extent=[0, 10]),
+      tele.showoff.views.Histogram(['val'], 'Value', bins=10, extent=[0, 10], x_title='val'),
     ])
     t.step()
     self.assertEqual(patch_data, {'data': {
@@ -75,8 +75,8 @@ class TestShowoffOutput(unittest.TestCase):
           ]},
           'mark': 'bar',
           'encoding': {
-            'x': {'field': 'x', 'type': 'ordinal', 'axis': {'labelAngle': 0}},
-            'y': {'field': 'y', 'type': 'quantitative'}
+            'x': {'field': 'x', 'type': 'ordinal', 'axis': {'title': 'val', 'labelAngle': 0}},
+            'y': {'field': 'y', 'type': 'quantitative', 'axis': {'title': 'count'}}
           }
         }}
       }
