@@ -8,7 +8,7 @@ def all_tests():
 
 setup(
   name='tele',
-  version='0.1.0a2',
+  version='0.1.0a3',
   packages=find_packages(),
   author='Aiden Nibali',
   description='Telemetry for PyTorch',

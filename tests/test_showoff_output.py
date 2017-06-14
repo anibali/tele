@@ -65,6 +65,8 @@ class TestShowoffOutput(unittest.TestCase):
       'attributes': {
         'type': 'vegalite',
         'content': {'body': {
+          'width': 370,
+          'height': 250,
           'data': {'values': [
             {'x': 1}, {'x': 1}, {'x': 1}, {'x': 2}, {'x': 2}, {'x': 3}, {'x': 4}, {'x': 3}
           ]},
