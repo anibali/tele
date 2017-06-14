@@ -65,7 +65,7 @@ class TestShowoffOutput(unittest.TestCase):
       'attributes': {
         'type': 'vegalite',
         'content': {'body': {
-          'width': 370,
+          'width': 420,
           'height': 250,
           'data': {'values': [
             {'x': '0.50', 'y': 1}, {'x': '1.50', 'y': 2}, {'x': '2.50', 'y': 2},
@@ -75,7 +75,8 @@ class TestShowoffOutput(unittest.TestCase):
           ]},
           'mark': 'bar',
           'encoding': {
-            'x': {'field': 'x', 'type': 'ordinal', 'axis': {'title': 'val', 'labelAngle': 0}},
+            'x': {'field': 'x', 'type': 'ordinal', 'sort': False,
+              'axis': {'title': 'val', 'labelAngle': 0}},
             'y': {'field': 'y', 'type': 'quantitative', 'axis': {'title': 'count'}}
           }
         }}

@@ -122,7 +122,7 @@ class _HistogramCell(Cell):
     values = [{'x': '{:0.2f}'.format(x), 'y': int(y)} for x, y in zip(xs, ys)]
 
     spec = {
-      'width': 370,
+      'width': 420,
       'height': 250,
       'data': {'values': values},
       'mark': 'bar',
@@ -130,6 +130,7 @@ class _HistogramCell(Cell):
         'x': {
           'field': 'x',
           'type': 'ordinal',
+          'sort': False,
           'axis': {'title': self.x_title, 'labelAngle': 0},
         },
         'y': {
