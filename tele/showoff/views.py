@@ -173,7 +173,7 @@ class _ImageCell(Cell):
       img_tag_template = '<img style="width: ' + width + ';" src=data:image/png;base64,{}>'
 
     stream = StringIO()
-    stream.write('<div>')
+    stream.write('<div style="background-image: linear-gradient(45deg, #808080 25%, transparent 25%), linear-gradient(-45deg, #808080 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #808080 75%), linear-gradient(-45deg, transparent 75%, #808080 75%); background-size: 20px 20px; background-position: 0 0, 0 10px, 10px -10px, -10px 0px;">')
     for img in images:
       if not isinstance(img, Image.Image):
         img = transforms.ToPILImage()(value.cpu())
