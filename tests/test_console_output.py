@@ -4,7 +4,7 @@ from tele import Telemetry
 from tele.meter import ValueMeter
 import tele.console, tele.console.views
 
-from tests.common import captured_output
+from tests import captured_output
 
 class TestConsoleOutput(unittest.TestCase):
   def test_normal(self):
