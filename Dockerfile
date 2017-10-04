@@ -42,6 +42,7 @@ ENV PATH=/home/user/miniconda/envs/pytorch-py36/bin:$PATH \
 # Install some dependencies from conda
 RUN conda install -y --name pytorch-py36 -c soumith \
     numpy=1.13.1 \
+    scipy=0.19.1 \
     pytorch=0.2.0 \
     torchvision=0.1.9 \
     h5py=2.7.0 \

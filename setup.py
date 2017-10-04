@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='tele',
-    version='0.1.0a3',
+    version='0.1.0a4',
     packages=find_packages(),
     author='Aiden Nibali',
     description='Telemetry for PyTorch',
