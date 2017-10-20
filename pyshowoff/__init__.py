@@ -44,13 +44,30 @@ class Notebook:
         self.client = client
         self.id = notebook_id
 
+    def new_tag(self, name):
+        data = {
+            'data': {
+                'type': 'tags',
+                'attributes': {'name': name},
+                'relationships': {
+                    'notebook': {
+                        'data': {'type': 'notebooks', 'id': self.id},
+                    },
+                },
+            },
+        }
+        res = self.client.request('post', '/api/v2/tags', data)
+        return Tag(self.client, res['data']['id'])
+
     def new_frame(self, title, bounds=None):
         data = {
             'data': {
                 'type': 'frames',
                 'attributes': {'title': title},
                 'relationships': {
-                    'notebook': {'id': self.id},
+                    'notebook': {
+                        'data': {'type': 'notebooks', 'id': self.id},
+                    },
                 },
             },
         }
@@ -58,6 +75,12 @@ class Notebook:
             data['data']['attributes'].update(bounds)
         res = self.client.request('post', '/api/v2/frames', data)
         return Frame(self.client, res['data']['id'])
+
+
+class Tag:
+    def __init__(self, client, tag_id):
+        self.client = client
+        self.id = tag_id
 
 
 class Frame:
