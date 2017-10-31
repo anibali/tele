@@ -38,6 +38,6 @@ class Conf(tele.Conf):
         cell_list = []
         for i, view in enumerate(view_list):
             bounds = self._calc_frame_bounds(i)
-            cell = view.build(self.notebook.new_frame(view.frame_title, bounds))
+            cell = view.build(self.notebook.add_frame(view.frame_title, bounds).result())
             cell_list.append(cell)
         return Sink(cell_list)

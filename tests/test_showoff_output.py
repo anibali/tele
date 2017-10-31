@@ -5,6 +5,15 @@ from tele.meter import ValueMeter
 import tele.showoff
 import tele.showoff.views
 import pyshowoff
+from pyshowoff.promise import Promise
+
+
+class DummyResponse:
+    def __init__(self, data):
+        self.data = data
+
+    def json(self):
+        return self.data
 
 
 class DummyClient(pyshowoff.Client):
@@ -14,8 +23,8 @@ class DummyClient(pyshowoff.Client):
 
     def request(self, method, path, data=None):
         if self.callback:
-            return self.callback(method, path, data)
-        return None
+            return Promise.resolve(DummyResponse(self.callback(method, path, data)))
+        return Promise.resolve()
 
 
 class TestShowoffOutput(unittest.TestCase):

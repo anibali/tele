@@ -7,3 +7,4 @@ scipy==0.19.1
 torch==0.2.*
 git+https://github.com/pytorch/tnt.git@ba256835a4f33d9139a70b6440c3223123132bc8#egg=torchnet
 torchvision==0.1.9
+git+https://github.com/anibali/pyshowoff.git@cfef2201547cbe3f8fb1e74ff62336d8d397d1dd#egg=pyshowoff-0.1.0a1
