@@ -196,7 +196,8 @@ class _ImageCell(Cell):
             + 'linear-gradient(45deg, transparent 75%, #808080 75%), '
             + 'linear-gradient(-45deg, transparent 75%, #808080 75%); '
             + 'background-size: 20px 20px; '
-            + 'background-position: 0 0, 0 10px, 10px -10px, -10px 0px;">')
+            + 'background-position: 0 0, 0 10px, 10px -10px, -10px 0px; '
+            + 'font-size: 0;">')
         for img in images:
             if not isinstance(img, Image.Image):
                 img = transforms.ToPILImage()(value.cpu())
