@@ -1,5 +1,4 @@
-import tele.meter
-import torchnet.meter
+from tele.meter import ValueMeter, TimeMeter, MeanValueMeter, MedianValueMeter
 import tele.console.views
 
 
@@ -10,9 +9,10 @@ class Sink(tele.Sink):
 
 class Conf(tele.Conf):
     def make_auto_view(self, meter_name, meter):
-        if isinstance(meter, torchnet.meter.AverageValueMeter) \
-                or isinstance(meter, torchnet.meter.TimeMeter) \
-                or isinstance(meter, tele.meter.ValueMeter):
+        if isinstance(meter, MeanValueMeter) \
+                or isinstance(meter, MedianValueMeter) \
+                or isinstance(meter, TimeMeter) \
+                or isinstance(meter, ValueMeter):
             return tele.console.views.KeyValue([meter_name])
         return None
 

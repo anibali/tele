@@ -1,6 +1,8 @@
 from io import StringIO
 import numpy as np
 from scipy.stats import norm
+from math import sqrt
+from time import perf_counter
 
 
 class Meter:
@@ -102,6 +104,39 @@ class SumMeter(Meter):
         self._value = self.initial_value
 
 
+class MeanValueMeter(Meter):
+    def __init__(self, skip_reset=False):
+        super().__init__(skip_reset)
+
+    def add(self, value, n=1):
+        self.sum += value
+        self.variance += value ** 2
+        self.n += n
+
+        if self.n == 0:
+            self.mean = np.nan
+            self.stddev = np.nan
+            return
+
+        self.mean = self.sum / self.n
+
+        if self.n == 1:
+            self.stddev = np.inf
+            return
+
+        self.stddev = sqrt((self.variance - self.n * self.mean ** 2) / (self.n - 1))
+
+    def value(self):
+        return self.mean, self.stddev
+
+    def reset(self):
+        self.n = 0
+        self.sum = 0
+        self.variance = 0
+        self.mean = np.nan
+        self.stddev = np.nan
+
+
 class MedianValueMeter(Meter):
     def __init__(self, skip_reset=False):
         self.values = []
@@ -123,3 +158,14 @@ class MedianValueMeter(Meter):
 
     def reset(self):
         self.values.clear()
+
+
+class TimeMeter(Meter):
+    def __init__(self, skip_reset=False):
+        super().__init__(skip_reset)
+
+    def value(self):
+        return perf_counter() - self.time
+
+    def reset(self):
+        self.time = perf_counter()

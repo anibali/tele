@@ -1,6 +1,5 @@
 import tele
-import tele.meter
-import torchnet.meter
+from tele.meter import ValueMeter, StringBuilderMeter, TimeMeter, MeanValueMeter
 import tele.showoff.views
 
 Sink = tele.Sink
@@ -12,10 +11,10 @@ class Conf(tele.Conf):
         self.notebook = notebook
 
     def make_auto_view(self, meter_name, meter):
-        if isinstance(meter, tele.meter.StringBuilderMeter):
+        if isinstance(meter, StringBuilderMeter):
             return tele.showoff.views.Text(meter_name)
-        if isinstance(meter, torchnet.meter.AverageValueMeter) \
-                or isinstance(meter, torchnet.meter.TimeMeter):
+        if isinstance(meter, MeanValueMeter) \
+                or isinstance(meter, TimeMeter):
             return tele.showoff.views.LineGraph(meter_name)
         return None
 

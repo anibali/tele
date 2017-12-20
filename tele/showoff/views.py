@@ -1,9 +1,9 @@
 import tele
+from tele.meter import MeanValueMeter, MedianValueMeter
 from io import StringIO, BytesIO
 import base64
 from PIL import Image
 import torchvision.transforms as transforms
-import torchnet.meter
 import numpy as np
 
 
@@ -106,7 +106,7 @@ class _LineGraphCell(Cell):
         series_names = []
         for i, meter in enumerate(meters):
             value = meter.value()
-            if isinstance(meter, torchnet.meter.AverageValueMeter):
+            if isinstance(meter, MeanValueMeter) or isinstance(meter, MedianValueMeter):
                 value = value[0]
             self.yss[i].append(value)
             series_names.append(self.meter_names[i])

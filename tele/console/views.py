@@ -1,5 +1,5 @@
 import tele
-import torchnet.meter
+from tele.meter import MeanValueMeter, MedianValueMeter
 
 
 class _KeyValueCell(tele.Cell):
@@ -7,9 +7,9 @@ class _KeyValueCell(tele.Cell):
         meter_name = self.meter_names[0]
         meter = meters[0]
         value = meter.value()
-        if isinstance(meter, torchnet.meter.AverageValueMeter):
-            (mean, std) = value
-            value_str = u'{:0.4f}\u00b1{:0.4f}'.format(mean, std)
+        if isinstance(meter, MeanValueMeter) or isinstance(meter, MedianValueMeter):
+            (mean, err) = value
+            value_str = u'{:0.4f}\u00b1{:0.4f}'.format(mean, err)
         elif isinstance(value, float):
             value_str = '{:0.4f}'.format(value)
         else:

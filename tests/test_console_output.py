@@ -5,7 +5,7 @@ from tele.meter import ValueMeter
 import tele.console
 import tele.console.views
 
-from tests import captured_output
+from . import captured_output
 
 
 class TestConsoleOutput(unittest.TestCase):
