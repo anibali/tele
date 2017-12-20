@@ -1,5 +1,5 @@
 import tele
-from tele.meter import ValueMeter, StringBuilderMeter, TimeMeter, MeanValueMeter
+from tele.meter import StringBuilderMeter, TimeMeter, MeanValueMeter
 import tele.showoff.views
 
 Sink = tele.Sink
@@ -20,7 +20,7 @@ class Conf(tele.Conf):
 
     @staticmethod
     def _calc_frame_bounds(index):
-        cell_width = 480
+        cell_width = 478
         cell_height = 308
         cell_cols = 4
 
