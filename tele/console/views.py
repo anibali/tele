@@ -9,7 +9,7 @@ class _KeyValueCell(tele.Cell):
         value = meter.value()
         if isinstance(meter, MeanValueMeter) or isinstance(meter, MedianValueMeter):
             (mean, err) = value
-            value_str = u'{:0.4f}\u00b1{:0.4f}'.format(mean, err)
+            value_str = u'{:0.4f}+-{:0.4f}'.format(mean, err)
         elif isinstance(value, float):
             value_str = '{:0.4f}'.format(value)
         else:
