@@ -8,12 +8,10 @@ class _ScalarCell(tele.Cell):
         self.run = run
 
     def render(self, step_num, meters):
-        print(self.meter_names)
         for meter_name, meter in zip(self.meter_names, meters):
             value = meter.value()
             if isinstance(value, Iterable):
                 value = next(iter(value))
-            print(meter_name, value)
             self.run.log_scalar(meter_name, value)
 
 
