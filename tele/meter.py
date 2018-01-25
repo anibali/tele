@@ -109,22 +109,18 @@ class MeanValueMeter(Meter):
         super().__init__(skip_reset)
 
     def add(self, value, n=1):
+        assert n > 0, 'n must be positive'
+
         self.sum += value
-        self.variance += value ** 2
+        self.sum_of_squares += value ** 2
         self.n += n
-
-        if self.n == 0:
-            self.mean = np.nan
-            self.stddev = np.nan
-            return
-
         self.mean = self.sum / self.n
 
         if self.n == 1:
             self.stddev = np.inf
-            return
-
-        self.stddev = sqrt((self.variance - self.n * self.mean ** 2) / (self.n - 1))
+        else:
+            variance = (self.sum_of_squares - self.n * self.mean ** 2) / (self.n - 1)
+            self.stddev = sqrt(max(variance, 0))
 
     def value(self):
         return self.mean, self.stddev
@@ -132,7 +128,7 @@ class MeanValueMeter(Meter):
     def reset(self):
         self.n = 0
         self.sum = 0
-        self.variance = 0
+        self.sum_of_squares = 0
         self.mean = np.nan
         self.stddev = np.nan
 
