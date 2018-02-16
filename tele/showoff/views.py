@@ -25,6 +25,25 @@ class View(tele.View):
         raise NotImplementedError()
 
 
+class _FrameContentCell(Cell):
+    def __init__(self, meter_names, frame, frame_type):
+        super().__init__(meter_names, frame)
+        self.frame_type = frame_type
+
+    def render(self, step_num, meters):
+        value = meters[0].value()
+        self.frame.set_content(self.frame_type, value)
+
+
+class FrameContent(View):
+    def __init__(self, meter_names, frame_title, frame_type):
+        super().__init__(meter_names, frame_title)
+        self.frame_type = frame_type
+
+    def build(self, frame):
+        return _FrameContentCell(self.meter_names, frame, self.frame_type)
+
+
 class _TextCell(Cell):
     def render(self, step_num, meters):
         stream = StringIO()

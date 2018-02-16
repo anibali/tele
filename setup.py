@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name='tele',
-    version='0.2.0',
+    version='0.2.1',
     packages=['tele', 'tele.console', 'tele.folder', 'tele.showoff',
               'tele.sacred'],
     author='Aiden Nibali',
