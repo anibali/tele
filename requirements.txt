@@ -6,4 +6,5 @@ requests==2.14.2
 scipy==0.19.1
 torch==0.2.*
 torchvision==0.1.9
+plotly==2.3.0
 git+https://github.com/anibali/pyshowoff.git@b39183eb465cbd795ad2f402db93d533a877ce0d#egg=pyshowoff

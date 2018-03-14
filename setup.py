@@ -13,6 +13,7 @@ setup(
         'h5py',
         'numpy',
         'Pillow',
+        'plotly',
         'requests',
         'torch',
         'torchvision',

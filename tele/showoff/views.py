@@ -5,6 +5,7 @@ import base64
 from PIL import Image
 import torchvision.transforms as transforms
 import numpy as np
+import plotly.graph_objs as go
 
 
 class Cell(tele.Cell):
@@ -42,6 +43,36 @@ class FrameContent(View):
 
     def build(self, frame):
         return _FrameContentCell(self.meter_names, frame, self.frame_type)
+
+
+class _PlotlyLineGraphCell(Cell):
+    def __init__(self, meter_names, frame):
+        super().__init__(meter_names, frame)
+        self.xs = []
+        self.yss = None
+
+    def render(self, step_num, meters):
+        if self.yss is None:
+            self.yss = [[] for _ in meters]
+        self.xs.append(step_num)
+        series_names = []
+        for i, meter in enumerate(meters):
+            value = meter.value()
+            if isinstance(meter, MeanValueMeter) or isinstance(meter, MedianValueMeter):
+                value = value[0]
+            self.yss[i].append(value)
+            series_names.append(self.meter_names[i])
+        fig = go.Figure(
+            data=[go.Scatter(x=self.xs, y=ys, mode='lines', name=name)
+                  for name, ys in zip(series_names, self.yss)],
+            layout=go.Layout(margin=go.Margin(l=40, r=20, b=40, t=20, pad=4))
+        )
+        self.frame.set_content('plotly', fig)
+
+
+class PlotlyLineGraph(View):
+    def build(self, frame):
+        return _PlotlyLineGraphCell(self.meter_names, frame)
 
 
 class _TextCell(Cell):
