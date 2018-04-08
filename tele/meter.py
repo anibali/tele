@@ -1,8 +1,13 @@
 from io import StringIO
 import numpy as np
 from scipy.stats import norm
-from math import sqrt
 from time import perf_counter
+
+
+def clamp(value, min=-np.inf, max=np.inf):
+    if hasattr(value, 'clamp'):
+        return value.clamp(min, max)
+    return np.clip(value, min, max)
 
 
 class Meter:
@@ -112,7 +117,7 @@ class MeanValueMeter(Meter):
         assert n > 0, 'n must be positive'
 
         self.sum += value
-        self.sum_of_squares += value ** 2
+        self.sum_of_squares += value ** 2 / n
         self.n += n
         self.mean = self.sum / self.n
 
@@ -120,7 +125,7 @@ class MeanValueMeter(Meter):
             self.stddev = np.inf
         else:
             variance = (self.sum_of_squares - self.n * self.mean ** 2) / (self.n - 1)
-            self.stddev = sqrt(max(variance, 0))
+            self.stddev = clamp(variance, min=0) ** 0.5
 
     def value(self):
         return self.mean, self.stddev
