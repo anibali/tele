@@ -2,7 +2,7 @@ graphviz==0.7.1
 h5py==2.7.0
 numpy==1.13.1
 Pillow==4.2.1
-requests==2.14.2
+requests==2.20.0
 scipy==0.19.1
 torch==0.2.*
 torchvision==0.1.9
